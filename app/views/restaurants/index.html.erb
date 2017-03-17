@@ -1,0 +1,42 @@
+<div class='navbar'>
+  <%= link_to "Log Out", user_path(session[:id]), method: :delete%>
+
+  <button id='add_rest'>Add a restaurant</button>
+
+  <div id="create_rest">
+    <h1>Add A Restaurant</h1>
+    <%= form_for @restaurant do |r| %>
+    <div class="form-group">
+      <%= r.label :name %>
+      <%= r.text_field :name %>
+    </div>
+      <%= r.submit 'Add Restaurant' %>
+      <% end %>
+  </div>
+
+  <div class="show_rest">
+    <% @restaurants.each do |r| %>
+      <div class="restaurants" id='<%= r.id %>'>
+        <% if flash[:errors] %>
+          <p><%= flash[:errors] %></p>
+        <% end %>
+        <h4>
+          <%= r.name %> -
+          <% if !r.ratings.average(:stars) %>
+            No ratings yet
+          <% else %>
+            <%= r.ratings.average(:stars)%>
+          <% end %>
+        </h4>
+        <form class='rating' id='r<%= r.id %>' action="/ratings" method="post">
+          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+          <% (1..5).each do |star| %>
+            <input type="submit" name="rating[stars]" value="<%= star%>">
+            <input type="hidden" name="rating[restaurant_id]" value="<%=r.id%>">
+          <% end %>
+        </form>
+      </div>
+    <% end %>
+  </div>
+
+</div>
